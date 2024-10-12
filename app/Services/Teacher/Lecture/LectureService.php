@@ -2,62 +2,75 @@
 
 namespace App\Services\Teacher\Lecture;
 
+use App\Models\Lecture;
 use App\Models\Teacher;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class LectureService
 {
-    public function __construct(public Teacher $teacher)
+
+    function getAll($course)
     {
-        $this->teacher = auth()->user();
+        return $course->lectures()->with('documents')->get();
     }
 
-    function getAll($course_id)
+//    function store($course,$request)
+//    {
+//        $lecture = $course->lectures()->create($request->getData());
+//        if ($request->file('files')){
+//            foreach ($request->file('files') as $file) {
+//                $fileName = time() . '_' . $file->getClientOriginalName();
+//
+//                $path = $file->storeAs('uploads', $fileName, 'public');
+//
+//                $lecture->documents()->create([
+//                    'path'=> $path,
+//                    'type' => $file->getClientMimeType(),
+//                ]);
+//            }
+//        }
+//        return $lecture;
+//    }
+    function store($course,$request)
     {
-        return $this->teacher->courses()->find($course_id)->lectures()->with('documents')->get();
-    }
 
-    function store($course_id,$request)
-    {
-        $lecture = $this->teacher->courses()->find($course_id)->lectures()->create($request->getData());
-        if ($request->file('files')){
+        $documents = [];
+        DB::beginTransaction();
+        $lecture = $course->lectures()->create($request->getData());
+        try{
             foreach ($request->file('files') as $file) {
                 $fileName = time() . '_' . $file->getClientOriginalName();
 
                 $path = $file->storeAs('uploads', $fileName, 'public');
 
-                $lecture->documents()->create([
+                $documents[] =  $lecture->documents()->create([
                     'path'=> $path,
                     'type' => $file->getClientMimeType(),
                 ]);
             }
+            DB::commit();
+        }catch (\Exception $e){
+            DB::rollBack();
+            foreach ($documents as $document) {
+                if (Storage::disk('public')->exists($document->path)) {
+                    Storage::disk('public')->delete($document->path);
+                }
+            }
+            return  $e;
         }
-        return $lecture;
+        return  Lecture::with('documents')->find($lecture->id);
     }
 
 
-    function isRelated($course_id,$lecture_id)
+    function update($lecture,$data)
     {
-        return $this->teacher->courses()->find($course_id)->lectures()->find($lecture_id);
-    }
-    function show($course_id,$lecture_id)
-    {
-        $result = $this->isRelated($course_id,$lecture_id);
-        if (!$result){
-            throw new \Exception('this lecture not related to you',403);
-        }
-        return true;
+        return $lecture->update($data);
     }
 
-    function update($course_id,$lecture_id,$data)
+    function destroy($lecture)
     {
-        return $this->teacher->courses()->find($course_id)->lectures()->find($lecture_id)->update($data);
-    }
-
-    function destroy($course_id,$lecture_id)
-    {
-        $result = $this->isRelated($course_id,$lecture_id);
-        return $this->teacher->courses()->find($course_id)->lectures()->find($lecture_id)->delete();
+        return $lecture->delete();
     }
 
 }

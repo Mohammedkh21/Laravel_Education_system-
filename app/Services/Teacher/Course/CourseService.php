@@ -27,12 +27,10 @@ class CourseService
     }
 
     function update($course , $data ){
-        $this->isRelated($course->id);
         return $course->update($data);
     }
 
-    function destroy($course  ){
-        $this->isRelated($course->id);
+    function destroy($course ){
         return $course->delete();
     }
 }

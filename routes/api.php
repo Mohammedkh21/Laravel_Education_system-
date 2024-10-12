@@ -46,11 +46,21 @@ Route::prefix('teacher')->group(function (){
             Route::get('/join/{camp}',[\App\Http\Controllers\Teacher\Camp\CampController::class,'join']);
             Route::delete('/forget/{camp}',[\App\Http\Controllers\Teacher\Camp\CampController::class,'forget']);
         });
-        Route::get('courses/{course}/lectures/{lecture}/documents',[\App\Http\Controllers\Teacher\Course\Lectuer\Document\DocumentController::class,'index']);
-        Route::get('courses/{course}/lectures/{lecture}/documents/{document}',
-            [\App\Http\Controllers\Teacher\Course\Lectuer\Document\DocumentController::class,'download']);
-        Route::delete('courses/{course}/lectures/{lecture}/documents/{document}',
-            [\App\Http\Controllers\Teacher\Course\Lectuer\Document\DocumentController::class,'destroy']);
+        Route::apiResource('courses.lectures.documents',
+            \App\Http\Controllers\Teacher\Course\Lectuer\Document\DocumentController::class)
+            ->except(['update'])
+            ->middleware('can:access,course');
+//        Route::prefix('courses/{course}/lectures/{lecture}/documents')
+//            ->middleware('can:access,course')
+//            ->group(function (){
+//            Route::get('',
+//                [\App\Http\Controllers\Teacher\Course\Lectuer\Document\DocumentController::class,'index']);
+//            Route::get('/{document}',
+//                [\App\Http\Controllers\Teacher\Course\Lectuer\Document\DocumentController::class,'download']);
+//            Route::delete('/{document}',
+//                [\App\Http\Controllers\Teacher\Course\Lectuer\Document\DocumentController::class,'destroy']);
+//        });
+
         Route::apiResource('courses.lectures',\App\Http\Controllers\Teacher\Course\Lectuer\LectureController::class);
         Route::apiResource('courses',\App\Http\Controllers\Teacher\Course\CourseController::class);
     });

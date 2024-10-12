@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Teacher\Course\Lectuer\Document;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DocumentStoreRequest;
 use App\Models\Course;
 use App\Models\Document;
 use App\Models\Lecture;
@@ -23,7 +24,13 @@ class DocumentController extends Controller
         );
     }
 
-    function download(Course $course,Lecture $lecture,Document $document)
+    public function store(DocumentStoreRequest $request , Course $course,Lecture $lecture )
+    {
+        return response()->json(
+            $this->documentService->store($lecture,$request)
+        );
+    }
+    function show(Course $course,Lecture $lecture,Document $document)
     {
         return $this->documentService->download($course->id,$lecture->id,$document->id);
     }

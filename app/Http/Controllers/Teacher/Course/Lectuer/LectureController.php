@@ -9,11 +9,20 @@ use App\Models\Course;
 use App\Models\Lecture;
 use App\Services\Teacher\Lecture\LectureService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Support\Facades\Gate;
 
-class LectureController extends Controller
+class LectureController extends Controller implements HasMiddleware
 {
     public function __construct(public LectureService $lectureService)
     {
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            'can:access,course'
+        ];
     }
 
     /**
@@ -22,7 +31,7 @@ class LectureController extends Controller
     public function index(Course $course)
     {
         return response()->json(
-            $this->lectureService->getAll($course->id)
+            $this->lectureService->getAll($course)
         );
     }
 
@@ -32,7 +41,7 @@ class LectureController extends Controller
     public function store(LectureStoreRequest $request,Course $course)
     {
         return response()->json(
-            $this->lectureService->store($course->id,$request)
+            $this->lectureService->store($course,$request)
         );
     }
 
@@ -41,7 +50,6 @@ class LectureController extends Controller
      */
     public function show(Course $course,Lecture $lecture)
     {
-        $this->lectureService->show($course->id,$lecture->id);
         return response()->json(
             $lecture
         );
@@ -53,7 +61,7 @@ class LectureController extends Controller
     public function update(LectureUpdateRequest $request, Course $course,Lecture $lecture)
     {
         return response()->json(
-            $this->lectureService->update($course->id,$lecture->id,$request->getData())
+            $this->lectureService->update($lecture,$request->getData())
         );
     }
 
@@ -63,7 +71,7 @@ class LectureController extends Controller
     public function destroy(Course $course,Lecture $lecture)
     {
         return response()->json(
-            $this->lectureService->destroy($course->id,$lecture->id)
+            $this->lectureService->destroy($lecture)
         );
     }
 }

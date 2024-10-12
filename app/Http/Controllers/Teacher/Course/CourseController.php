@@ -8,12 +8,23 @@ use App\Http\Requests\CourseUpdateRequest;
 use App\Models\Course;
 use App\Services\Teacher\Course\CourseService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
 
-class CourseController extends Controller
+class CourseController extends Controller implements HasMiddleware
 {
     public function __construct(public CourseService $courseService)
     {
     }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:access,course', only:['update','show','destroy']),
+        ];
+    }
+
 
     /**
      * Display a listing of the resource.
@@ -40,7 +51,6 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
-        $this->courseService->isRelated($course->id);
         return response()->json($course);
     }
 
