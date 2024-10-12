@@ -15,23 +15,6 @@ class LectureService
         return $course->lectures()->with('documents')->get();
     }
 
-//    function store($course,$request)
-//    {
-//        $lecture = $course->lectures()->create($request->getData());
-//        if ($request->file('files')){
-//            foreach ($request->file('files') as $file) {
-//                $fileName = time() . '_' . $file->getClientOriginalName();
-//
-//                $path = $file->storeAs('uploads', $fileName, 'public');
-//
-//                $lecture->documents()->create([
-//                    'path'=> $path,
-//                    'type' => $file->getClientMimeType(),
-//                ]);
-//            }
-//        }
-//        return $lecture;
-//    }
     function store($course,$request)
     {
 

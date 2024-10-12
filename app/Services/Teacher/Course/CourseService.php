@@ -17,15 +17,6 @@ class CourseService
         return auth()->user()->courses()->create($data);
     }
 
-    function isRelated($course_id)
-    {
-        $result = auth()->user()->courses()->where('courses.id',$course_id)->first();
-        if (!$result){
-            throw new \Exception('this course not related to you',403);
-        }
-        return $result;
-    }
-
     function update($course , $data ){
         return $course->update($data);
     }

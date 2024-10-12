@@ -20,7 +20,7 @@ class DocumentController extends Controller
     function index(Course $course,Lecture $lecture)
     {
         return response()->json(
-            $this->documentService->getAll($course->id,$lecture->id)
+            $this->documentService->getAll($lecture)
         );
     }
 
@@ -32,13 +32,13 @@ class DocumentController extends Controller
     }
     function show(Course $course,Lecture $lecture,Document $document)
     {
-        return $this->documentService->download($course->id,$lecture->id,$document->id);
+        return $this->documentService->download($document);
     }
 
     function destroy(Course $course,Lecture $lecture,Document $document)
     {
         return response()->json(
-            $this->documentService->destroy($course->id,$lecture->id,$document->id)
+            $this->documentService->destroy( $document)
         );
     }
 }

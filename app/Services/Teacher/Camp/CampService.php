@@ -19,17 +19,10 @@ class CampService
         return $this->teacher->camps ;
     }
 
-    function show($camp_id)
-    {
-        return $this->teacher->camps()->where('camps.id', $camp_id)->first();
-    }
+
 
     function joinCamp($camp)
     {
-        $isRelated = $this->show($camp->id);
-        if ($isRelated){
-            throw new \Exception('you are already in the camp', 403);
-        }
         $user = auth()->user();
         $request =  $user->requests()->where('type', 'join_camp')
             ->whereJsonContains('data->camp_id', $camp->id)
@@ -54,10 +47,6 @@ class CampService
 
     function forget($camp_id)
     {
-        $camp = $this->teacher->camps()->where('camps.id', $camp_id)->first();
-        if(!$camp){
-            return false;
-        }
         return $this->teacher->camps()->detach($camp_id);
     }
 }

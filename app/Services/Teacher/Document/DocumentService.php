@@ -7,16 +7,13 @@ use Illuminate\Support\Facades\Storage;
 
 class DocumentService
 {
-    function getAll($course_id,$lecture_id)
+    function getAll($lecture)
     {
-        return auth()->user()->courses()->find($course_id)
-            ->lectures()->find($lecture_id)->documents;
+        return $lecture->documents;
     }
 
-    function download($course_id,$lecture_id,$document_id)
+    function download($document)
     {
-        $document =  auth()->user()->courses()->find($course_id)
-            ->lectures()->find($lecture_id)->documents()->find($document_id);
         if (Storage::disk('public')->exists($document->path)) {
             return Storage::disk('public')->download($document->path);
         }
@@ -52,10 +49,9 @@ class DocumentService
         }
     }
 
-    function destroy($course_id,$lecture_id,$document_id)
+    function destroy($document)
     {
-        return auth()->user()->courses()->find($course_id)
-            ->lectures()->find($lecture_id)->documents()->find($document_id)->delete();
+        return $document->delete();
     }
 
 }

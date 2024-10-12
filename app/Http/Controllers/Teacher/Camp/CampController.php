@@ -6,13 +6,21 @@ use App\Http\Controllers\Controller;
 use App\Models\Camp;
 use App\Services\Teacher\Camp\CampService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class CampController extends Controller
+class CampController extends Controller implements  HasMiddleware
 {
     public function __construct(public CampService $campService)
     {
     }
 
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:access,camp', only:['forget','show']),
+        ];
+    }
     function index()
     {
         return response()->json(
@@ -22,13 +30,6 @@ class CampController extends Controller
 
     function show(Camp $camp)
     {
-        $camp =  $this->campService->show($camp->id);
-        if (!$camp){
-            return response()->json([
-                'message' => 'Teacher is NOT related to the camp'
-            ], 403);
-        }
-
         return response()->json(
             $camp
         );
@@ -36,22 +37,21 @@ class CampController extends Controller
 
     function join(Camp $camp)
     {
-        $camp =  $this->campService->joinCamp($camp);
+        if (!auth()->user()->can('access', $camp)) {
+            $this->campService->joinCamp($camp);
+            return response()->json(
+                ['message'=>'join camp request sent']
+            );
+        }
         return response()->json(
-            ['message'=>'join camp request sent']
+            ['message'=>'you are already in this camp'],401
         );
     }
 
     function forget(Camp $camp)
     {
-        $result = $this->campService->forget($camp->id);
-        if (!$result){
-            return response()->json([
-                'message' => 'Teacher is NOT related to the camp'
-            ], 403);
-        }
         return response()->json(
-            $result
+            $this->campService->forget($camp->id)
         );
     }
 }
