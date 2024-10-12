@@ -29,4 +29,8 @@ class Teacher extends Authenticatable
     public function requests(){
         return $this->morphMany(Request::class,'requestable');
     }
+
+    public function courses(){
+        return $this->hasMany(Course::class);
+    }
 }
