@@ -31,4 +31,12 @@ class Admin extends Authenticatable
         return Student::whereIn('camp_id', $this->camps()->pluck('camps.id'))->get();
     }
 
+    public function teachers()
+    {
+        $camps_id = $this->camps()->pluck('camps.id');
+        return Teacher::whereHas('camps', function ($query) use ($camps_id) {
+                        $query->whereIn('camps.id', $camps_id);
+                    })->get();
+    }
+
 }

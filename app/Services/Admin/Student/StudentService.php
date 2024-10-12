@@ -13,38 +13,16 @@ class StudentService
     }
     function getAll()
     {
-        return $this->admin->camps()->with('students')->get()
-            ->pluck('students')
-            ->flatten()
-            ;
-    }
-
-    function show($student_id)
-    {
-        return $this->admin->camps()->with(['students'=>function($query) use($student_id){
-            $query->where('students.id',$student_id);
-        }])->get()
-            ->pluck('students')
-            ->flatten()
-            ->first()
-            ;
+        return  $this->admin->students();
     }
 
     function update($data,$student)
     {
-        $isRelated = $this->show($student->id);
-        if($isRelated){
-            return $student->update($data);
-        }
-        return false;
+        return $student->update($data);
     }
 
     function destroy($student){
-        $isRelated = $this->show($student->id);
-        if($isRelated){
-            return $student->delete();
-        }
-        return false;
+        return $student->delete();
     }
 
 }

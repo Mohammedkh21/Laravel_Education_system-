@@ -50,17 +50,6 @@ Route::prefix('teacher')->group(function (){
             \App\Http\Controllers\Teacher\Course\Lectuer\Document\DocumentController::class)
             ->except(['update'])
             ->middleware('can:access,course');
-//        Route::prefix('courses/{course}/lectures/{lecture}/documents')
-//            ->middleware('can:access,course')
-//            ->group(function (){
-//            Route::get('',
-//                [\App\Http\Controllers\Teacher\Course\Lectuer\Document\DocumentController::class,'index']);
-//            Route::get('/{document}',
-//                [\App\Http\Controllers\Teacher\Course\Lectuer\Document\DocumentController::class,'download']);
-//            Route::delete('/{document}',
-//                [\App\Http\Controllers\Teacher\Course\Lectuer\Document\DocumentController::class,'destroy']);
-//        });
-
         Route::apiResource('courses.lectures',\App\Http\Controllers\Teacher\Course\Lectuer\LectureController::class);
         Route::apiResource('courses',\App\Http\Controllers\Teacher\Course\CourseController::class);
     });
@@ -83,27 +72,11 @@ Route::prefix('admin')->group(function (){
                 Route::get('/reply/{request}/{status}',[\App\Http\Controllers\Admin\Request\RequestController::class,'reply']);
             });
 
-
-            Route::prefix('/teachers')->group(function (){
-                Route::get('/',[\App\Http\Controllers\Admin\Teacher\TeacherController::class,'index']);
-                Route::get('/courses',[\App\Http\Controllers\Admin\Course\CourseController::class,'teachersWithCourses']);
-                Route::prefix('/{teacher}')->group(function (){
-                    Route::get('/',[\App\Http\Controllers\Admin\Teacher\TeacherController::class,'show']);
-                    Route::post('/',[\App\Http\Controllers\Admin\Teacher\TeacherController::class,'update']);
-                    Route::delete('/',[\App\Http\Controllers\Admin\Teacher\TeacherController::class,'destroy']);
-                });
-            });
-
-            Route::prefix('/students')->group(function (){
-                Route::get('/',[\App\Http\Controllers\Admin\Student\StudentController::class,'index']);
-                Route::prefix('/{student}')->group(function (){
-                    Route::get('/',[\App\Http\Controllers\Admin\Student\StudentController::class,'show']);
-                    Route::post('/',[\App\Http\Controllers\Admin\Student\StudentController::class,'update']);
-                    Route::delete('/',[\App\Http\Controllers\Admin\Student\StudentController::class,'destroy']);
-                });
-            });
-
-
+            Route::get('/teachers/courses',[\App\Http\Controllers\Admin\Course\CourseController::class,'teachersWithCourses']);
+            Route::apiResource('teachers',\App\Http\Controllers\Admin\Teacher\TeacherController::class)
+                ->except(['store']);
+            Route::apiResource('students',\App\Http\Controllers\Admin\Student\StudentController::class)
+                ->except(['store']);
         });
         Route::apiResource('camps',\App\Http\Controllers\admin\Camp\CampController::class);
 

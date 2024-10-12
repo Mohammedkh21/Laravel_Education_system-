@@ -6,12 +6,21 @@ use App\Http\Requests\TeacherUpdateRequest;
 use App\Models\Camp;
 use App\Models\Teacher;
 use App\Services\Admin\Teacher\TeacherService;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class TeacherController
+class TeacherController implements  HasMiddleware
 {
 
     public function __construct(public  TeacherService $teacherService)
     {
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:access,teacher', only:['update','show','destroy']),
+        ];
     }
 
     function index()
@@ -23,12 +32,6 @@ class TeacherController
 
     function show(Teacher $teacher)
     {
-        $teacher =  $this->teacherService->show($teacher->id);
-        if (!$teacher){
-            return response()->json([
-                'message' => 'teacher  is NOT related to the Admin'
-            ], 403);
-        }
         return response()->json(
             $teacher
         );
