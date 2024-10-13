@@ -21,7 +21,7 @@ return new class extends Migration
             $table->boolean('visibility')->nullable();
             $table->timestamp('start_in')->nullable();
             $table->timestamp('end_in')->nullable();
-            $table->integer('course_id')->nullable();
+            $table->integer('related_to')->nullable();
             $table->timestamps();
         });
     }

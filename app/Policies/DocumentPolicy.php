@@ -26,11 +26,18 @@ class DocumentPolicy
     private function studentAccess(Student $student, Document $document)
     {
         return
-            $student->courses()->with('lectures.documents')->get()
-                ->flatMap(function ($course) {
+            $student->courses()->with(['lectures.documents','assignments'=>function($query){
+                $query->visibility()->with('documents');
+            }])
+                ->get()
+                ->flatMap(function ($course) use ($student) {
                     return $course->lectures->flatMap(function ($lecture) {
                         return $lecture->documents;
-                    });
+                    })->merge($course->assignments->flatMap(function ($assignment) {
+                        return $assignment->documents;
+                    }))->merge($student->assignments->flatMap(function ($assignment) {
+                        return $assignment->documents;
+                    }));
                 })
                 ->where('id', $document->id)
                 ->isNotEmpty()

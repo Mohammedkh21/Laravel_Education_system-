@@ -16,6 +16,10 @@ class Document extends Model
 
     protected $hidden = ['path'];
 
+    public function getVisiblePathAttribute()
+    {
+        return $this->attributes['path'];
+    }
     public function documentable()
     {
         return $this->morphTo();

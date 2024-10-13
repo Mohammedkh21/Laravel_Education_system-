@@ -22,7 +22,7 @@ class DocumentService
     }
 
     function store($field,$request)
-    {info('servicw'); info($request->file('files'));
+    {
         $documents = [];
         DB::beginTransaction();
         try{

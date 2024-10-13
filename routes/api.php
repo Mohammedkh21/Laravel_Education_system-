@@ -31,6 +31,16 @@ Route::prefix('student')->group(function (){
                 Route::get('/{lecture}',[\App\Http\Controllers\Student\Course\Lecture\LectureController::class,'show']);
                 Route::get('/documents/{document}',\App\Http\Controllers\Student\Course\Lecture\Document\DocumentController::class);
             });
+            Route::prefix('{course}/assignments')
+                ->middleware('can:access,course')
+                ->group(function (){
+                Route::get('/',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'index']);
+                Route::get('/{assignment}',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'show']);
+                Route::get('/documents/{document}',\App\Http\Controllers\Student\Course\Assignment\Document\DocumentController::class);
+                Route::post('/{assignment}/submit',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'submit']);
+                Route::get('/{assignment}/submit',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'showSubmit']);
+                Route::delete('/{assignment}/submit',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'deleteSubmit']);
+            });
         });
     });
 });
@@ -51,6 +61,11 @@ Route::prefix('teacher')->group(function (){
             Route::get('/show/{camp}',[\App\Http\Controllers\Teacher\Camp\CampController::class,'show']);
             Route::get('/join/{camp}',[\App\Http\Controllers\Teacher\Camp\CampController::class,'join']);
             Route::delete('/forget/{camp}',[\App\Http\Controllers\Teacher\Camp\CampController::class,'forget']);
+        });
+        Route::prefix('/courses/{course}/assignments/{assignment}/submits')->group(function (){
+            Route::get('/',[\App\Http\Controllers\Teacher\Course\Assignment\AssignmentController::class,'studentSubmits']);
+            Route::get('/students/{student}',[\App\Http\Controllers\Teacher\Course\Assignment\AssignmentController::class,'downloadStudentSubmit']);
+            Route::post('/students/{student}',[\App\Http\Controllers\Teacher\Course\Assignment\AssignmentController::class,'rate']);
         });
         Route::apiResource('courses.assignments.documents', \App\Http\Controllers\Teacher\Course\Assignment\Document\DocumentController::class)
             ->except(['update']);

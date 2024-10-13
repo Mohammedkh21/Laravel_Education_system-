@@ -3,6 +3,7 @@
 namespace App\Services\Teacher\Assignment;
 
 use App\Models\Assignment;
+use App\Models\Student;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -57,6 +58,39 @@ class AssignmentService
     function destroy($assignment)
     {
         return $assignment->delete();
+    }
+
+    function studentSubmits($course,$assignment)
+    {
+        return Student::whereHas('courses', function($query) use ($course) {
+            $query->where('courses.id', $course->id);
+            })->with(['assignments' => function($query) use ($assignment) {
+                    $query->where('assignments.type', 'submit')
+                    ->where('assignments.related_to', $assignment->id);
+            },'assignments.documents'])
+            ->get();
+    }
+
+    function downloadStudentSubmit($course,$assignment,$student)
+    {
+        $document = $this->studentSubmits($course,$assignment)
+            ->where('id',$student->id)
+            ->pluck('assignments.*.documents')
+            ->flatten()
+            ->first();
+        if ($document){
+            if (Storage::disk('public')->exists($document->path)) {
+                return Storage::disk('public')->download($document->path);
+            }
+        }
+
+
+        return throw new \Exception('no submit for this student');
+    }
+
+    function rate($course,$assignment,$student)
+    {
+        
     }
 
 }

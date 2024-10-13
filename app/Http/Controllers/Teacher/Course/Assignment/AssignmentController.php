@@ -7,6 +7,7 @@ use App\Http\Requests\AssignmentStoreRequest;
 use App\Http\Requests\AssignmentUpdateRequest;
 use App\Models\Assignment;
 use App\Models\Course;
+use App\Models\Student;
 use App\Services\Teacher\Assignment\AssignmentService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -75,5 +76,22 @@ class AssignmentController extends Controller implements HasMiddleware
         return response()->json(
             $this->assignmentService->destroy($assignment)
         );
+    }
+
+    function studentSubmits(Course $course,Assignment $assignment)
+    {
+        return response()->json(
+            $this->assignmentService->studentSubmits($course,$assignment)
+        );
+    }
+
+    function downloadStudentSubmit(Course $course,Assignment $assignment,Student $student)
+    {
+        return $this->assignmentService->downloadStudentSubmit($course,$assignment,$student);
+    }
+
+    function rate(Course $course,Assignment $assignment,Student $student)
+    {
+        return $this->assignmentService->rate($course,$assignment,$student);
     }
 }
