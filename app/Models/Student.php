@@ -34,4 +34,8 @@ class Student extends Authenticatable
     public function courses(){
         return $this->belongsToMany(Course::class);
     }
+
+    public function assignments(){
+        return $this->morphMany(Assignment::class,'assignmentable');
+    }
 }

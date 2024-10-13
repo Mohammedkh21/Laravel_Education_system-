@@ -1,23 +1,22 @@
 <?php
 
-namespace App\Services\Teacher\Lecture;
+namespace App\Services\Teacher\Assignment;
 
-use App\Models\Lecture;
-use App\Models\Teacher;
+use App\Models\Assignment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
-class LectureService
+class AssignmentService
 {
 
     function getAll($course)
     {
-        return $course->lectures()->with('documents')->get();
+        return $course->assignments()->with('documents')->get();
     }
 
-    function show($course,$lecture)
+    function show($course,$assignment)
     {
-        return $course->lectures()->with('documents')->find($lecture->id);
+        return $course->assignments()->with('documents')->find($assignment->id);
     }
 
     function store($course,$request)
@@ -25,14 +24,14 @@ class LectureService
 
         $documents = [];
         DB::beginTransaction();
-        $lecture = $course->lectures()->create($request->getData());
+        $assignment = $course->assignments()->create($request->getData());
         try{
             foreach ($request->file('files') as $file) {
                 $fileName = time() . '_' . $file->getClientOriginalName();
 
                 $path = $file->storeAs('uploads', $fileName, 'public');
 
-                $documents[] =  $lecture->documents()->create([
+                $documents[] =  $assignment->documents()->create([
                     'path'=> $path,
                     'type' => $file->getClientMimeType(),
                 ]);
@@ -47,18 +46,17 @@ class LectureService
             }
             return  $e;
         }
-        return  Lecture::with('documents')->find($lecture->id);
+        return  Assignment::with('documents')->find($assignment->id);
     }
 
-
-    function update($lecture,$data)
+    function update($assignment,$data)
     {
-        return $lecture->update($data);
+        return $assignment->update($data);
     }
 
-    function destroy($lecture)
+    function destroy($assignment)
     {
-        return $lecture->delete();
+        return $assignment->delete();
     }
 
 }

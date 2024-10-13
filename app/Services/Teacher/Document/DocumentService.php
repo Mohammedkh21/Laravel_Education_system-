@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Storage;
 
 class DocumentService
 {
-    function getAll($lecture)
+    function getAll($field)
     {
-        return $lecture->documents;
+        return $field->documents;
     }
 
     function download($document)
@@ -21,8 +21,8 @@ class DocumentService
         return response()->json(['error' => 'File not found'], 404);
     }
 
-    function store($lecture,$request)
-    {
+    function store($field,$request)
+    {info('servicw'); info($request->file('files'));
         $documents = [];
         DB::beginTransaction();
         try{
@@ -31,7 +31,7 @@ class DocumentService
 
                 $path = $file->storeAs('uploads', $fileName, 'public');
 
-                $documents[] =  $lecture->documents()->create([
+                $documents[] =  $field->documents()->create([
                     'path'=> $path,
                     'type' => $file->getClientMimeType(),
                 ]);

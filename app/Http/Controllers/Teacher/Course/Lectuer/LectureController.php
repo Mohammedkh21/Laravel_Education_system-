@@ -10,6 +10,7 @@ use App\Models\Lecture;
 use App\Services\Teacher\Lecture\LectureService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Gate;
 
 class LectureController extends Controller implements HasMiddleware
@@ -21,7 +22,9 @@ class LectureController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            'can:access,course'
+            'can:access,course',
+            new Middleware('can:access,lecture',except:['index','store'])
+
         ];
     }
 
@@ -51,7 +54,7 @@ class LectureController extends Controller implements HasMiddleware
     public function show(Course $course,Lecture $lecture)
     {
         return response()->json(
-            $lecture
+            $this->lectureService->show($course,$lecture)
         );
     }
 

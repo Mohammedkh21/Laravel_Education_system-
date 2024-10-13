@@ -24,7 +24,13 @@ Route::prefix('student')->group(function (){
             Route::get('/join/{course}',[\App\Http\Controllers\Student\Course\CourseController::class,'join']);
             Route::get('/leave/{course}',[\App\Http\Controllers\Student\Course\CourseController::class,'leave']);
             Route::get('/available',[\App\Http\Controllers\Student\Course\CourseController::class,'available']);
-
+            Route::prefix('{course}/lectures')
+                ->middleware('can:access,course')
+                ->group(function (){
+                Route::get('/',[\App\Http\Controllers\Student\Course\Lecture\LectureController::class,'index']);
+                Route::get('/{lecture}',[\App\Http\Controllers\Student\Course\Lecture\LectureController::class,'show']);
+                Route::get('/documents/{document}',\App\Http\Controllers\Student\Course\Lecture\Document\DocumentController::class);
+            });
         });
     });
 });
@@ -46,10 +52,11 @@ Route::prefix('teacher')->group(function (){
             Route::get('/join/{camp}',[\App\Http\Controllers\Teacher\Camp\CampController::class,'join']);
             Route::delete('/forget/{camp}',[\App\Http\Controllers\Teacher\Camp\CampController::class,'forget']);
         });
-        Route::apiResource('courses.lectures.documents',
-            \App\Http\Controllers\Teacher\Course\Lectuer\Document\DocumentController::class)
-            ->except(['update'])
-            ->middleware('can:access,course');
+        Route::apiResource('courses.assignments.documents', \App\Http\Controllers\Teacher\Course\Assignment\Document\DocumentController::class)
+            ->except(['update']);
+        Route::apiResource('courses.assignments',\App\Http\Controllers\Teacher\Course\Assignment\AssignmentController::class);
+        Route::apiResource('courses.lectures.documents', \App\Http\Controllers\Teacher\Course\Lectuer\Document\DocumentController::class)
+            ->except(['update']);
         Route::apiResource('courses.lectures',\App\Http\Controllers\Teacher\Course\Lectuer\LectureController::class);
         Route::apiResource('courses',\App\Http\Controllers\Teacher\Course\CourseController::class);
     });
