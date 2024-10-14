@@ -12,38 +12,13 @@ class QuestionPolicy
 {
     function access($user,Question $question)
     {
-        if ($user instanceof Student) {
-            return $this->studentAccess($user, $question);
-        }
-
         if ($user instanceof Teacher) {
             return $this->teacherAccess($user, $question);
         }
 
         return false;
     }
-    private function studentAccess(Student $student, Question $question)
-    {
-//        return
-//            $student->courses()->with(['lectures.documents','assignments'=>function($query){
-//                $query->visibility()->with('documents');
-//            }])
-//                ->get()
-//                ->flatMap(function ($course) use ($student) {
-//                    return $course->lectures->flatMap(function ($lecture) {
-//                        return $lecture->documents;
-//                    })->merge($course->assignments->flatMap(function ($assignment) {
-//                        return $assignment->documents;
-//                    }))->merge($student->assignments->flatMap(function ($assignment) {
-//                        return $assignment->documents;
-//                    }));
-//                })
-//                ->where('id', $document->id)
-//                ->isNotEmpty()
-//            ? Response::allow()
-//            : Response::deny('You do not have permission to access on this question');
 
-    }
     private function teacherAccess(Teacher $teacher, Question $question)
     {
 

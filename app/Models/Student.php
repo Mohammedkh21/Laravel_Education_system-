@@ -38,4 +38,9 @@ class Student extends Authenticatable
     public function assignments(){
         return $this->morphMany(Assignment::class,'assignmentable');
     }
+
+    function quizAttempts()
+    {
+        return $this->hasMany(QuizAttempt::class);
+    }
 }

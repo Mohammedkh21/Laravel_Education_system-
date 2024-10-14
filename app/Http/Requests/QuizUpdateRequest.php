@@ -24,8 +24,10 @@ class QuizUpdateRequest extends FormRequest
         return [
             'title' => 'sometimes|required|string',
             'description'=> 'sometimes|required|string',
-            'degree' => 'sometimes|required|integer',
+            'degree' => 'sometimes|required|integer|min:1',
+            'time' => 'sometimes|required|integer|min:1',
             'visibility'=> 'sometimes|required|boolean',
+            'result_visible'=> 'boolean',
             'start_in' => 'sometimes|required|date|after:now',
             'end_in' => [
                 'sometimes','required','date',
@@ -47,6 +49,6 @@ class QuizUpdateRequest extends FormRequest
     }
     function getData()
     {
-        return $this->only(['title','description','degree','visibility','start_in','end_in']);
+        return $this->only(['title','description','time' ,'degree','result_visible','visibility','start_in','end_in']);
     }
 }

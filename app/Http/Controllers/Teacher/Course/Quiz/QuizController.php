@@ -52,7 +52,7 @@ class QuizController extends Controller implements HasMiddleware
     public function show(Course $course,Quiz $quiz)
     {
         return response()->json(
-            $quiz
+            $this->quizService->show($course,$quiz)
         );
     }
 

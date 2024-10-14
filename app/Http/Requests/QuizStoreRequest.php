@@ -24,14 +24,16 @@ class QuizStoreRequest extends FormRequest
         return [
             'title' => 'required|string',
             'description'=> 'required|string',
-            'degree' => 'required|integer',
+            'degree' => 'required|integer|min:1',
+            'time' => 'required|integer|min:1',
             'visibility'=> 'required|boolean',
+            'result_visible'=> 'boolean',
             'start_in' => 'required|date|after:now',
             'end_in' => 'required|date|after:start_in',
         ];
     }
     function getData()
     {
-        return $this->only(['title','description','degree','visibility','start_in','end_in']);
+        return $this->only(['title','description','time' ,'degree','result_visible','visibility','start_in','end_in']);
     }
 }

@@ -24,23 +24,32 @@ Route::prefix('student')->group(function (){
             Route::get('/join/{course}',[\App\Http\Controllers\Student\Course\CourseController::class,'join']);
             Route::get('/leave/{course}',[\App\Http\Controllers\Student\Course\CourseController::class,'leave']);
             Route::get('/available',[\App\Http\Controllers\Student\Course\CourseController::class,'available']);
-            Route::prefix('{course}/lectures')
+            Route::prefix('{course}')
                 ->middleware('can:access,course')
                 ->group(function (){
-                Route::get('/',[\App\Http\Controllers\Student\Course\Lecture\LectureController::class,'index']);
-                Route::get('/{lecture}',[\App\Http\Controllers\Student\Course\Lecture\LectureController::class,'show']);
-                Route::get('/documents/{document}',\App\Http\Controllers\Student\Course\Lecture\Document\DocumentController::class);
-            });
-            Route::prefix('{course}/assignments')
-                ->middleware('can:access,course')
-                ->group(function (){
-                Route::get('/',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'index']);
-                Route::get('/{assignment}',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'show']);
-                Route::get('/documents/{document}',\App\Http\Controllers\Student\Course\Assignment\Document\DocumentController::class);
-                Route::post('/{assignment}/submit',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'submit']);
-                Route::get('/{assignment}/submit',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'showSubmit']);
-                Route::delete('/{assignment}/submit',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'deleteSubmit']);
-            });
+                    Route::prefix('/lectures')->group(function (){
+                        Route::get('/',[\App\Http\Controllers\Student\Course\Lecture\LectureController::class,'index']);
+                        Route::get('/{lecture}',[\App\Http\Controllers\Student\Course\Lecture\LectureController::class,'show']);
+                        Route::get('/documents/{document}',\App\Http\Controllers\Student\Course\Lecture\Document\DocumentController::class);
+
+                    });
+                    Route::prefix('/assignments')->group(function (){
+                        Route::get('/',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'index']);
+                        Route::get('/{assignment}',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'show']);
+                        Route::get('/documents/{document}',\App\Http\Controllers\Student\Course\Assignment\Document\DocumentController::class);
+                        Route::post('/{assignment}/submit',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'submit']);
+                        Route::get('/{assignment}/submit',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'showSubmit']);
+                        Route::delete('/{assignment}/submit',[\App\Http\Controllers\Student\Course\Assignment\AssignmentController::class,'deleteSubmit']);
+                    });
+                    Route::prefix('quizzes')->group(function (){
+                        Route::get('/',[\App\Http\Controllers\Student\Course\Quiz\QuizController::class,'index']);
+                        Route::get('/{quiz}',[\App\Http\Controllers\Student\Course\Quiz\QuizController::class,'show']);
+                        Route::get('/{quiz}/attempt',[\App\Http\Controllers\Student\Course\Quiz\QuizController::class,'attempt']);
+                        Route::post('/{quiz}/attempt',[\App\Http\Controllers\Student\Course\Quiz\QuizController::class,'submitAttempt']);
+                    });
+
+
+                });
         });
     });
 });

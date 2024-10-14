@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('description');
             $table->unsignedBigInteger('course_id');
             $table->integer('degree');
+            $table->integer('time');
             $table->boolean('visibility');
             $table->timestamp('start_in')->nullable();
             $table->timestamp('end_in')->nullable();

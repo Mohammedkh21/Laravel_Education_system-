@@ -2,6 +2,8 @@
 
 namespace App\Services\Teacher\Quiz;
 
+use App\Models\Quiz;
+
 class QuizService
 {
 
@@ -13,6 +15,11 @@ class QuizService
     function store($data,$course)
     {
         return $course->quizzes()->create($data);
+    }
+
+    function show($course,$quiz)
+    {
+        return Quiz::with('quizAttempts.student','quizAttempts.grade')->find($quiz->id);
     }
 
 
