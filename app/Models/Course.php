@@ -29,4 +29,8 @@ class Course extends Model
     public function assignments(){
         return $this->morphMany(Assignment::class,'assignmentable');
     }
+
+    public function quizzes(){
+        return $this->hasMany(Quiz::class);
+    }
 }
