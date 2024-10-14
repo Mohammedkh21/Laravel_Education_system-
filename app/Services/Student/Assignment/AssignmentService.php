@@ -6,6 +6,7 @@ use App\Models\Assignment;
 use App\Models\Lecture;
 use App\Models\Student;
 use App\Models\Teacher;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -34,6 +35,7 @@ class AssignmentService
             ->where('type', 'submit')
             ->where('related_to', $assignment->id)
             ->with('documents')
+            ->with('grade')
             ->first();
     }
 
@@ -46,7 +48,11 @@ class AssignmentService
         $submit = $student->assignments()
             ->where('type', 'submit')
             ->where('related_to', $assignment->id)
+            ->with('grade')
             ->first();
+        if ($submit->grade || !Carbon::now()->lt($assignment->end_in)){
+            throw new \Exception('you cant delete the submit',403);
+        }
         if ($submit){
             return $submit->delete();
         }
@@ -56,6 +62,9 @@ class AssignmentService
     function submit($request,$course,$course_assignment)
     {
         $submit=$this->showSubmit($course,$course_assignment);
+        if (!Carbon::now()->lt($course_assignment->end_in)){
+            throw new \Exception('you cant submit : timeout',403);
+        }
         if ($submit){
             throw new \Exception('you already added submit to this assignment',401);
         }

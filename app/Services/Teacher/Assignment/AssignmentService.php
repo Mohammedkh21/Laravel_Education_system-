@@ -67,7 +67,7 @@ class AssignmentService
             })->with(['assignments' => function($query) use ($assignment) {
                     $query->where('assignments.type', 'submit')
                     ->where('assignments.related_to', $assignment->id);
-            },'assignments.documents'])
+            },'assignments.documents','assignments.grade'])
             ->get();
     }
 
@@ -88,9 +88,27 @@ class AssignmentService
         return throw new \Exception('no submit for this student');
     }
 
-    function rate($course,$assignment,$student)
+    function setRate($course,$assignment,$student,$mark)
     {
-        
+        $student_submit = Student::whereHas('courses', function($query) use ($course) {
+                                $query->where('courses.id', $course->id);
+                            })->where('id',$student->id)->first()
+                            ->assignments()->where('assignments.type', 'submit')
+                            ->where('assignments.related_to', $assignment->id)->first();
+        if($mark > $assignment->degree){
+            throw new \Exception('the maximum mark for this assignment is '.$assignment->degree,401);
+        }
+        if ($student_submit->grade) {
+            $student_submit->grade()->update([
+                'result' => $mark,
+            ]);
+        } else {
+            $student_submit->grade()->create([
+                'result' => $mark,
+            ]);
+        }
+
+        return true;
     }
 
 }

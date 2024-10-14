@@ -90,8 +90,11 @@ class AssignmentController extends Controller implements HasMiddleware
         return $this->assignmentService->downloadStudentSubmit($course,$assignment,$student);
     }
 
-    function rate(Course $course,Assignment $assignment,Student $student)
+    function rate(Request $request,Course $course,Assignment $assignment,Student $student)
     {
-        return $this->assignmentService->rate($course,$assignment,$student);
+        $request->validate([
+           'mark'=>'required|integer|min:0'
+        ]);
+        return $this->assignmentService->setRate($course,$assignment,$student,$request->input('mark'));
     }
 }

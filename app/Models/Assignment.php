@@ -42,4 +42,8 @@ class Assignment extends Model
         return $this->morphMany(Document::class, 'documentable');
     }
 
+    public function grade(){
+        return $this->morphOne(Grade::class,'gradeable');
+    }
+
 }
