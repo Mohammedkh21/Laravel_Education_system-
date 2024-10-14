@@ -20,6 +20,7 @@ Route::prefix('student')->group(function (){
            // remove from camp
         });
         Route::prefix('courses')->group(function (){
+            Route::get('/timeline',[\App\Http\Controllers\Student\Course\CourseController::class,'timeline']);
             Route::get('/',[\App\Http\Controllers\Student\Course\CourseController::class,'index']);
             Route::get('/join/{course}',[\App\Http\Controllers\Student\Course\CourseController::class,'join']);
             Route::get('/leave/{course}',[\App\Http\Controllers\Student\Course\CourseController::class,'leave']);

@@ -40,4 +40,11 @@ class CourseController extends Controller
             $this->courseService->available()
         );
     }
+
+    function timeline()
+    {
+        return response()->json(
+            $this->courseService->timeline()
+        );
+    }
 }
