@@ -9,7 +9,7 @@
 
 ## Run Project
 
-( sent database configuration in .env file )
+( set database configuration in .env file )
 
 postman collection : https://app.getpostman.com/join-team?invite_code=ed06b8965cfb87fd11acb24cc6a7f5bf&target_code=1bc436e2abbac205d5b8b5bee327d853
 
