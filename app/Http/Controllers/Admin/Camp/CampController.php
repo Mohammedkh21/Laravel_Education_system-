@@ -8,12 +8,21 @@ use App\Http\Requests\CampUpdateRequest;
 use App\Models\Camp;
 use App\Services\Admin\Camp\CampService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class CampController extends Controller
+class CampController extends Controller implements HasMiddleware
 {
 
     public function __construct(public CampService $campService)
     {
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:access,camp', only:['update','show','destroy']),
+        ];
     }
 
     /**
@@ -41,13 +50,6 @@ class CampController extends Controller
      */
     public function show(Camp $camp)
     {
-        $camp =  $this->campService->show($camp->id);
-        if (!$camp){
-            return response()->json([
-                'message' => 'Admin is NOT related to the camp'
-            ], 403);
-        }
-
         return response()->json(
             $camp
         );
@@ -59,7 +61,7 @@ class CampController extends Controller
     public function update(CampUpdateRequest $request, Camp $camp)
     {
         return response()->json(
-            $this->campService->update($camp->id,$request->getData())
+            $this->campService->update($camp,$request->getData())
         );
     }
 
@@ -69,7 +71,7 @@ class CampController extends Controller
     public function destroy(Camp $camp)
     {
         return response()->json(
-            $this->campService->destroy($camp->id)
+            $this->campService->destroy($camp)
         );
     }
 }

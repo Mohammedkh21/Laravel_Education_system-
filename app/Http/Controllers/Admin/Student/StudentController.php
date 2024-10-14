@@ -5,13 +5,21 @@ namespace App\Http\Controllers\Admin\Student;
 use App\Http\Requests\StudentUpdateRequest;
 use App\Models\Student;
 use App\Services\Admin\Student\StudentService;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class StudentController
+class StudentController implements HasMiddleware
 {
     public function __construct(public  StudentService $studentService)
     {
     }
 
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:access,student', only:['update','show','destroy']),
+        ];
+    }
     function index()
     {
         return response()->json(
@@ -21,12 +29,6 @@ class StudentController
 
     function show(Student $student)
     {
-        $student =  $this->studentService->show($student->id);
-        if (!$student){
-            return response()->json([
-                'message' => 'student  is NOT related to the Admin'
-            ], 403);
-        }
         return response()->json(
             $student
         );
@@ -45,4 +47,6 @@ class StudentController
             $this->studentService->destroy( $student)
         );
     }
+
+
 }

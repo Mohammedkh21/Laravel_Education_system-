@@ -22,16 +22,12 @@ class CampService
         return $this->admin->camps()->create($data);
     }
 
-    function show($camp_id)
-    {
-        return $this->admin->camps()->where('camps.id', $camp_id)->first();
+
+    function update($camp,$data){
+        return $camp->update($data);
     }
 
-    function update($camp_id,$data){
-        return $this->admin->camps()->where('camps.id', $camp_id)->update($data);
-    }
-
-    function destroy($camp_id){
-        return $this->admin->camps()->where('camps.id', $camp_id)->delete();
+    function destroy($camp){
+        return $camp->delete();
     }
 }

@@ -21,7 +21,7 @@ class Request extends Model
         return json_decode($value); // Decode the JSON string to an object
     }
 
-    public function commentable(): MorphTo
+    public function requestable(): MorphTo
     {
         return $this->morphTo();
     }
