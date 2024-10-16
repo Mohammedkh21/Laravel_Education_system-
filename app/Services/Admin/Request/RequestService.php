@@ -2,9 +2,11 @@
 
 namespace App\Services\Admin\Request;
 
+use App\Models\Camp;
 use App\Models\Request;
 use App\Models\Student;
 use App\Notifications\joinCampResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
 
 class RequestService
@@ -19,28 +21,43 @@ class RequestService
                     $query->orWhereJsonContains('data->camp_id', $camp_id);
                 }
             })
-            ->get();
+            ->with('requestable')->get();
         return $results;
     }
 
     function reply($request , $status)
     {
+        $admin = auth()->user();
+        $camp = Camp::findOrFail($request->data->camp_id);
+        Gate::authorize('access', $camp);
 
-        $camp = auth()->user()->camps()->where('camps.id',$request->data->camp_id)->first();
-        if (!$camp){
-            throw new \Exception('you are not admin in this camp',403);
-        }
-
+        $user = $request->requestable;
         $model = $request->data->model ;
 
         if ( filter_var($status, FILTER_VALIDATE_BOOLEAN) ){
             if ($model == Student::class){
-                $model::where('id',$request->data->user_id)->update(['camp_id'=>$request->data->camp_id]);
+                $student_limit = $admin->subscriptionPlan->students;
+
+                throw_if($admin->students()->count() > $student_limit,
+                    \Exception::class ,
+                    "you already reached the limit of your subscription plan : $student_limit student",
+                    401);
+                $student = $user;
+                if ($student->camp_id){
+                    $request->delete();
+                    throw_if($student->camp_id,\Exception::class,'the student joined another camp ',403);
+                }
+                $student->update(['camp_id'=>$request->data->camp_id]);
             }else{
-                $model::find($request->data->user_id)->camps()->attach($request->data->camp_id);
+                $teacher = $user;
+                $teacher_limit = $admin->subscriptionPlan->teachers;
+                throw_if($admin->teachers()->count() > $teacher_limit,
+                    \Exception::class,
+                    "you already reached the limit of your subscription plan : $teacher_limit teacher",
+                    401);
+                $teacher->camps()->attach($request->data->camp_id);
             }
         }
-        $user = $model::find($request->data->user_id);
 
         Notification::send($user,new joinCampResponse($camp,$status));
         return $request->delete();

@@ -39,4 +39,9 @@ class Admin extends Authenticatable
                     })->get();
     }
 
+    function subscriptionPlan()
+    {
+        return $this->belongsTo(SubscriptionPlan::class);
+    }
+
 }
