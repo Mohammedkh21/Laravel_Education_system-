@@ -92,6 +92,12 @@ Route::prefix('teacher')->group(function (){
 Route::prefix('admin')->group(function (){
     Route::post('register',[\App\Http\Controllers\Admin\AuthController::class,'register']);
     Route::post('login',[\App\Http\Controllers\Admin\AuthController::class,'login']);
+    Route::prefix('resit_password')->group(function (){
+        Route::post('/otp',[\App\Http\Controllers\Admin\AuthController::class,'sendResitPasswordOTP']);
+        Route::post('/check_otp',[\App\Http\Controllers\Admin\AuthController::class,'checkOTP']);
+        Route::post('/',[\App\Http\Controllers\Admin\AuthController::class,'resitPassword']);
+
+    });
     Route::middleware('auth:admin')->group(function (){
         Route::post('logout',[\App\Http\Controllers\Admin\AuthController::class,'logout']);
         Route::get('index',[\App\Http\Controllers\Admin\AuthController::class,'index']);

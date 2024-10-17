@@ -3,8 +3,11 @@
 namespace App\Services\Authentication;
 
 
+use App\Mail\OtpMail;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class AuthService
@@ -36,4 +39,40 @@ class AuthService
         $user->update($data);
         return $user;
     }
+
+    function sendOTP($email)
+    {
+        $otp = rand(1000, 9999);
+
+        $otpDB = DB::table('resit_password_otp')->updateOrInsert(
+            ['email' => $email],
+            [
+                'otp' => $otp,
+                'created_at' => now(),
+            ]
+        );
+        Mail::to($email)->send(new OtpMail($otp));
+
+        return $otpDB;
+    }
+
+    function checkOTP($email,$otp){
+        return DB::table('resit_password_otp')->where([
+            'email'=>$email,
+            'otp'=>$otp
+        ])->exists();
+    }
+
+    function resitPassword($data,$class){
+        $otp = $this->checkOTP($data['email'],$data['otp']);
+        throw_if(!$otp,\Exception::class,'invalid data',401);
+
+        DB::table('resit_password_otp')->where('email',$data['email'])->delete();
+
+        return $class::where('email',$data['email'])->update([
+            'password'=>  Hash::make($data['password'])
+        ]);
+    }
+
+
 }

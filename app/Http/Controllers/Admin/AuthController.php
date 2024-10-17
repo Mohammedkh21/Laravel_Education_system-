@@ -38,6 +38,39 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logged out successfully'], 200);
     }
 
+    function sendResitPasswordOTP(Request $request)
+    {
+        $request->validate(['email'=>'required|email|exists:admins,email']);
+        return response()->json(
+            $this->authService->sendOTP($request->input('email'))
+        );
+    }
+
+    function checkOTP(Request $request){
+        $request->validate(
+            [
+                'email'=>'required|email|exists:admins,email',
+                'otp'=>'required|integer|digits:4'
+            ]
+        );
+        return response()->json(
+            $this->authService->checkOTP($request->input('email'),$request->input('otp'))
+        );
+    }
+
+    function resitPassword(Request $request)
+    {
+        $request->validate(
+            [
+                'email'=>'required|email|exists:admins,email',
+                'otp'=>'required|integer|digits:4',
+                'password' => 'required|string|min:8',
+            ]
+        );
+        return response()->json(
+            $this->authService->resitPassword($request->only(['email','otp','password']) , Admin::class)
+        );
+    }
     function index(){
         return response()->json(
             auth()->user()
