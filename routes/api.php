@@ -6,6 +6,12 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('student')->group(function (){
     Route::post('register',[\App\Http\Controllers\Student\AuthController::class,'register']);
     Route::post('login',[\App\Http\Controllers\Student\AuthController::class,'login']);
+    Route::prefix('resit_password')->group(function (){
+        Route::post('/otp',[\App\Http\Controllers\Student\AuthController::class,'sendResitPasswordOTP']);
+        Route::post('/check_otp',[\App\Http\Controllers\Student\AuthController::class,'checkOTP']);
+        Route::post('/',[\App\Http\Controllers\Student\AuthController::class,'resitPassword']);
+
+    });
     Route::middleware('auth:student')->group(function (){
         Route::post('logout',[\App\Http\Controllers\Student\AuthController::class,'logout']);
         Route::get('index',[\App\Http\Controllers\Student\AuthController::class,'index']);
@@ -58,6 +64,12 @@ Route::prefix('student')->group(function (){
 Route::prefix('teacher')->group(function (){
     Route::post('register',[\App\Http\Controllers\Teacher\AuthController::class,'register']);
     Route::post('login',[\App\Http\Controllers\Teacher\AuthController::class,'login']);
+    Route::prefix('resit_password')->group(function (){
+        Route::post('/otp',[\App\Http\Controllers\Teacher\AuthController::class,'sendResitPasswordOTP']);
+        Route::post('/check_otp',[\App\Http\Controllers\Teacher\AuthController::class,'checkOTP']);
+        Route::post('/',[\App\Http\Controllers\Teacher\AuthController::class,'resitPassword']);
+
+    });
     Route::middleware('auth:teacher')->group(function (){
         Route::post('logout',[\App\Http\Controllers\Teacher\AuthController::class,'logout']);
         Route::get('index',[\App\Http\Controllers\Teacher\AuthController::class,'index']);
