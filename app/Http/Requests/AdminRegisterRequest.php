@@ -23,7 +23,7 @@ class AdminRegisterRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:teachers,email',
+            'email' => 'required|email|unique:admins,email',
             'password' => 'required|string|min:8|confirmed',
             'age' => 'required|integer',
             'sex' => 'required|string|in:male,female',

@@ -14,7 +14,7 @@
 postman collection : https://app.getpostman.com/join-team?invite_code=ed06b8965cfb87fd11acb24cc6a7f5bf&target_code=1bc436e2abbac205d5b8b5bee327d853
 
 - composer install
-- php artisan migrate
+- php artisan migrate --seed
 - php artisan serve
 
 

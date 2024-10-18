@@ -56,18 +56,18 @@ class CourseService
                 ])->get();
             }
         ])->find($student->id);
-
-        $assignments = collect($data['courses'])
-            ->pluck('assignments')
-            ->flatten()
-            ->toArray();
-
-        $quizzes = collect($data['courses'])
-            ->pluck('quizzes')
-            ->flatten()
-            ->toArray();
-
-        return collect($assignments)->merge($quizzes)->sortBy('end_in')->toArray();
+        return $data;
+//        $assignments = collect($data['courses'])
+//            ->pluck('assignments')
+//            ->flatten()
+//            ->toArray();
+//
+//        $quizzes = collect($data['courses'])
+//            ->pluck('quizzes')
+//            ->flatten()
+//            ->toArray();
+//
+//        return collect($assignments)->merge($quizzes)->sortBy('end_in')->toArray();
 
     }
 }

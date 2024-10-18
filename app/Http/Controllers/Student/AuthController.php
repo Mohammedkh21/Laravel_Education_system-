@@ -51,4 +51,38 @@ class AuthController extends Controller
         );
     }
 
+    function sendResitPasswordOTP(Request $request)
+    {
+        $request->validate(['email'=>'required|email|exists:students,email']);
+        return response()->json(
+            $this->authService->sendOTP($request->input('email'))
+        );
+    }
+
+    function checkOTP(Request $request){
+        $request->validate(
+            [
+                'email'=>'required|email|exists:students,email',
+                'otp'=>'required|integer|digits:4'
+            ]
+        );
+        return response()->json(
+            $this->authService->checkOTP($request->input('email'),$request->input('otp'))
+        );
+    }
+
+    function resitPassword(Request $request)
+    {
+        $request->validate(
+            [
+                'email'=>'required|email|exists:students,email',
+                'otp'=>'required|integer|digits:4',
+                'password' => 'required|string|min:8',
+            ]
+        );
+        return response()->json(
+            $this->authService->resitPassword($request->only(['email','otp','password']) , Student::class)
+        );
+    }
+
 }

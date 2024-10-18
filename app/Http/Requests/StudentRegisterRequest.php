@@ -28,13 +28,12 @@ class StudentRegisterRequest extends FormRequest
             'age' => 'required|integer',
             'sex' => 'required|string|in:male,female',
             'phone_number' => 'required|digits_between:7,15',
-            'camp_id' => 'required|exists:camps,id',
             'level' => 'required|integer|max:12',
         ];
     }
 
     public function getData()
     {
-        return $this->only(['name', 'email', 'age', 'sex', 'phone_number', 'camp_id', 'password', 'level']);
+        return $this->only(['name', 'email', 'age', 'sex', 'phone_number','password', 'level']);
     }
 }

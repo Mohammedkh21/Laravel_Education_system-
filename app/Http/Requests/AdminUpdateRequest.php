@@ -23,7 +23,7 @@ class AdminUpdateRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|email|unique:teachers,email',
+            'email' => 'sometimes|required|email|unique:admins,email',
             'password' => 'sometimes|required|string|min:8|confirmed',
             'age' => 'sometimes|required|integer',
             'sex' => 'sometimes|required|string|in:male,female',
